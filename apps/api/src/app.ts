@@ -12,7 +12,10 @@ import { inventoryRoutes } from './routes/inventory.js';
 import { memberRoutes } from './routes/members.js';
 
 export async function buildApp(db: Database, env: Env) {
-  const app = Fastify({ logger: env.NODE_ENV === 'development' ? { level: 'info' } : false });
+  const app = Fastify({
+    logger: env.NODE_ENV === 'development' ? { level: 'info' } : false,
+    trustProxy: env.TRUST_PROXY,
+  });
 
   registerErrorHandler(app);
   await app.register(cors, { origin: env.CORS_ORIGIN.split(','), credentials: true });

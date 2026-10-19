@@ -91,15 +91,17 @@ npm run dev:web                         # http://localhost:5173
 npm test
 ```
 
-São 32 testes no total.
+São 34 testes no total.
 
-**API (21 testes, contra PostgreSQL real):**
+**API (23 testes, contra PostgreSQL real):**
 - login, validação e mensagem igual para e-mail ou senha errados
 - token inválido, rotação e revogação do refresh, limite de tentativas
 - permissões de capitão e membro
 - cálculo do disponível, empréstimo acima do estoque e devolução por terceiros
 - atrasos, cadastro de membros
 - **dois empréstimos simultâneos pela última unidade:** só um passa
+- **quatro réplicas subindo juntas:** as migrations e o seed rodam uma vez só (advisory lock no PostgreSQL)
+- atrás de proxy, o limite de login vale por cliente (`X-Forwarded-For`, com `TRUST_PROXY=true`)
 
 **Front (11 testes, com MSW simulando a API):**
 - validação do formulário e erro do servidor no login
@@ -109,6 +111,8 @@ São 32 testes no total.
 - renovação automática do token expirado
 
 O GitHub Actions roda lint, tipos, testes (com PostgreSQL 18) e build, constrói as duas imagens Docker e publica a demonstração no GitHub Pages.
+
+O deploy em Kubernetes (Helm + Terraform, testado num cluster de verdade na CI) fica no repositório [infra-kubernetes-terraform](https://github.com/Kauan-V-Marques/infra-kubernetes-terraform).
 
 ---
 

@@ -22,7 +22,8 @@ export interface TestContext {
   close: () => Promise<void>;
 }
 
-export async function createTestContext(options: { loginRateLimit?: number } = {}): Promise<TestContext> {
+/** Banco vazio e exclusivo; drop() apaga no final. */
+export async function createEmptyDatabase() {
   const name = `almox_test_${randomBytes(4).toString('hex')}`;
   const admin = new pg.Client({ connectionString: SERVER_URL });
   await admin.connect();
@@ -31,7 +32,22 @@ export async function createTestContext(options: { loginRateLimit?: number } = {
 
   const url = new URL(SERVER_URL);
   url.pathname = `/${name}`;
-  const { db, pool } = createDatabase(url.toString());
+  return {
+    url: url.toString(),
+    drop: async () => {
+      const cleanup = new pg.Client({ connectionString: SERVER_URL });
+      await cleanup.connect();
+      await cleanup.query(`DROP DATABASE IF EXISTS ${name} WITH (FORCE)`);
+      await cleanup.end();
+    },
+  };
+}
+
+export async function createTestContext(
+  options: { loginRateLimit?: number; trustProxy?: boolean } = {},
+): Promise<TestContext> {
+  const database = await createEmptyDatabase();
+  const { db, pool } = createDatabase(database.url);
   await runMigrations(db);
   await seed(db);
 
@@ -40,6 +56,7 @@ export async function createTestContext(options: { loginRateLimit?: number } = {
     NODE_ENV: 'test',
     // Os testes fazem muitos logins seguidos; o limite real é testado à parte
     LOGIN_RATE_LIMIT: String(options.loginRateLimit ?? 1000),
+    TRUST_PROXY: String(options.trustProxy ?? false),
   });
   const app = await buildApp(db, env);
 
@@ -52,10 +69,7 @@ export async function createTestContext(options: { loginRateLimit?: number } = {
     close: async () => {
       await app.close();
       await pool.end();
-      const cleanup = new pg.Client({ connectionString: SERVER_URL });
-      await cleanup.connect();
-      await cleanup.query(`DROP DATABASE IF EXISTS ${name} WITH (FORCE)`);
-      await cleanup.end();
+      await database.drop();
     },
   };
 }
