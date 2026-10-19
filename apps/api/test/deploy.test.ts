@@ -1,9 +1,10 @@
+import pg from 'pg';
 import { afterAll, expect, it } from 'vitest';
 
 import { createDatabase } from '../src/db/client.js';
 import { prepareDatabase } from '../src/db/migrate.js';
 import { users } from '../src/db/schema.js';
-import { CAPTAIN, createEmptyDatabase, createTestContext } from './helpers.js';
+import { CAPTAIN, createEmptyDatabase, createTestContext, login } from './helpers.js';
 
 const cleanups: Array<() => Promise<void>> = [];
 afterAll(async () => {
@@ -40,4 +41,20 @@ it('atrás do Ingress, o limite de login vale por cliente (X-Forwarded-For)', as
   expect(first).toEqual([401, 401, 429]);
   // Outro cliente, mesmo proxy: não herda o bloqueio
   expect((await attempt('198.51.100.20')).statusCode).toBe(401);
+});
+
+it('o banco reiniciando não derruba a API: as conexões ociosas caem e são refeitas', async () => {
+  const ctx = await createTestContext();
+  cleanups.push(ctx.close);
+  await login(ctx.app, CAPTAIN); // deixa conexões abertas e ociosas no pool
+
+  // Simula o PostgreSQL reiniciando: derruba todas as conexões da API
+  const admin = new pg.Client({ connectionString: ctx.db.$client.options.connectionString });
+  await admin.connect();
+  await admin.query('SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid()');
+  await admin.end();
+  await new Promise((resolve) => setTimeout(resolve, 200));
+
+  const { token } = await login(ctx.app, CAPTAIN);
+  expect(token).toBeTruthy();
 });
