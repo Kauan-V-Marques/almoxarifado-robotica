@@ -1,0 +1,79 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: almox
+          POSTGRES_USER: almox
+          POSTGRES_PASSWORD: almox
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U almox -d almox"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Tipos
+        run: npm run typecheck
+      - name: Testes (API com PostgreSQL real + front com MSW)
+        run: npm test
+        env:
+          TEST_DATABASE_URL: postgres://almox:almox@localhost:5432/almox
+      - name: Build
+        run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Imagem da API
+        run: docker build -f apps/api/Dockerfile -t almox-api .
+      - name: Imagem do front
+        run: docker build -f apps/web/Dockerfile -t almox-web .
+
+  demo:
+    # Publica a demonstração (API simulada no navegador) no GitHub Pages
+    if: github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build:demo -w @almox/web
+      - name: Rotas da SPA no GitHub Pages
+        run: cp apps/web/dist/index.html apps/web/dist/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+      - id: deploy
+        uses: actions/deploy-pages@v4
