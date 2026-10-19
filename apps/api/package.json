@@ -1,0 +1,37 @@
+{
+  "name": "@almox/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.cjs",
+    "build": "esbuild src/server.ts --bundle --platform=node --target=node22 --format=cjs --external:pg-native --outfile=dist/server.cjs",
+    "typecheck": "tsc -p .",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/db/cli.ts",
+    "db:seed": "tsx src/db/cli.ts --seed"
+  },
+  "dependencies": {
+    "@almox/shared": "*",
+    "@fastify/cookie": "^11.1.3",
+    "@fastify/cors": "^11.3.1",
+    "@fastify/jwt": "^10.2.5",
+    "@fastify/rate-limit": "^11.2.1",
+    "drizzle-orm": "^0.45.4",
+    "fastify": "^5.12.7",
+    "fastify-plugin": "^6.0.1",
+    "pg": "^8.23.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.23.1",
+    "drizzle-kit": "^0.31.11",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.12"
+  }
+}
