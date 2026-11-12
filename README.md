@@ -1,10 +1,29 @@
-# Almoxarifado da Equipe de Robótica
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0D1117,50:1F6FEB,100:58A6FF&height=110&section=header" alt="" width="100%">
+</p>
 
-![CI](https://github.com/Kauan-V-Marques/almoxarifado-robotica/actions/workflows/ci.yml/badge.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
-![Node.js](https://img.shields.io/badge/Node.js-24-5FA04E?logo=nodedotjs&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&logoColor=white)
+<h1 align="center">Almoxarifado da Equipe de Robótica</h1>
+
+<p align="center"><b>Full stack em TypeScript · React · Fastify · PostgreSQL</b></p>
+
+<p align="center">
+  <a href="https://github.com/Kauan-V-Marques/almoxarifado-robotica/actions/workflows/ci.yml"><img src="https://github.com/Kauan-V-Marques/almoxarifado-robotica/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React">
+  <img src="https://img.shields.io/badge/Node.js-24-5FA04E?logo=nodedotjs&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL">
+</p>
+
+<p align="center">
+  <a href="https://kauan-v-marques.github.io/almoxarifado-robotica/"><b>Abrir a demonstração</b></a> ·
+  <a href="#funcionalidades">Funcionalidades</a> ·
+  <a href="#segurança-e-regras">Segurança e regras</a> ·
+  <a href="#arquitetura">Arquitetura</a> ·
+  <a href="#como-rodar">Como rodar</a> ·
+  <a href="#testes">Testes</a>
+</p>
+
+---
 
 Sistema web **full stack em TypeScript** para controlar o almoxarifado de uma equipe de robótica: quais componentes existem (sensores, motores, microcontroladores, baterias...), quem pegou o quê emprestado, o que está atrasado e o que precisa ser reposto.
 
@@ -131,3 +150,15 @@ A **full-stack TypeScript** app (React + Fastify + PostgreSQL) to manage a robot
 - 32 tests (API against real PostgreSQL, front-end with Testing Library + MSW), Docker images, CI and a live demo on GitHub Pages with an in-browser mocked API
 
 </details>
+
+---
+
+<p align="center">
+  Feito por <a href="https://github.com/Kauan-V-Marques"><b>Kauan Victor Marques</b></a> ·
+  <a href="https://kauan-v-marques.github.io/curriculo/">Currículo</a> ·
+  <a href="https://github.com/Kauan-V-Marques?tab=repositories">Mais projetos</a>
+</p>
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0D1117,50:1F6FEB,100:58A6FF&height=80&section=footer" alt="" width="100%">
+</p>
